@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Login + Register + Dashboard (XAMPP MySQL)
 
-## Getting Started
+This project now includes:
 
-First, run the development server:
+- User registration
+- User login
+- Protected dashboard
+- Session cookie auth (JWT in HTTP-only cookie)
+- MySQL database integration for XAMPP
+
+## 1) Start XAMPP
+
+From XAMPP Control Panel, start:
+
+- Apache
+- MySQL
+
+## 2) Create the Database
+
+Open phpMyAdmin (usually http://localhost/phpmyadmin), then run the SQL in [database/schema.sql](database/schema.sql).
+
+This creates:
+
+- Database: `kunohap_auth`
+- Table: `users`
+
+## 3) Configure Environment Variables
+
+Copy [.env.example](.env.example) to `.env.local`, then update values if needed:
+
+```env
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=
+DB_NAME=kunohap_auth
+JWT_SECRET=replace-with-a-long-random-secret
+```
+
+For `JWT_SECRET`, use a long random value (at least 16 characters).
+
+## 4) Install Dependencies
+
+```bash
+npm install
+```
+
+## 5) Run Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Routes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `/` -> Login page
+- `/register` -> Registration page
+- `/dashboard` -> Protected dashboard page
 
-## Learn More
+Auth APIs:
 
-To learn more about Next.js, take a look at the following resources:
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `POST /api/auth/logout`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Security Notes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Passwords are hashed with `bcryptjs`.
+- Session token is stored in an HTTP-only cookie.
+- Dashboard checks and verifies the session before loading user data.
